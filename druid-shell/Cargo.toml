@@ -39,7 +39,7 @@ serde = ["kurbo/serde"]
 # NOTE: When changing the piet or kurbo versions, ensure that
 #       the kurbo version included in piet is compatible with the kurbo version specified here.
 copypasta = "0.7.1"
-piet-wgpu = { git = "https://github.com/lapce/piet-wgpu" }
+piet-wgpu = { git = "https://github.com/ghishadow/piet-wgpu" }
 winit = { git = "https://github.com/lapce/winit", branch = "new-keyboard-all" }
 # piet-common = "=0.5.0-pre1"
 kurbo = "0.8.1"
