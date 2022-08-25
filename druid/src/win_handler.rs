@@ -345,6 +345,7 @@ impl<T: Data> InnerAppState<T> {
 
     fn paint(&mut self, window_id: WindowId) {
         if let Some(win) = self.windows.get_mut(window_id) {
+            win.prepare_paint(&mut self.command_queue, &mut self.data, &self.env);
             win.do_paint(&mut self.command_queue, &self.data, &self.env);
         }
     }
@@ -687,7 +688,7 @@ impl<T: Data> AppState<T> {
     ///
     /// This is principally because in certain cases (such as keydown on Windows)
     /// the OS needs to know if an event was handled.
-    fn do_window_event(&mut self, event: Event, window_id: WindowId) -> Handled {
+    pub(crate) fn do_window_event(&mut self, event: Event, window_id: WindowId) -> Handled {
         let result = self.inner.borrow_mut().do_window_event(window_id, event);
         self.process_commands();
         self.inner.borrow_mut().do_update();
@@ -938,7 +939,9 @@ impl<T: Data> AppState<T> {
                 .map(|w| w.clone())
         };
         if let Some(window_id) = window_id {
-            self.do_window_event(Event::WindowCloseRequested, window_id);
+            self.inner
+                .borrow_mut()
+                .do_window_event(window_id, Event::WindowCloseRequested);
             self.inner.borrow_mut().request_close_window(window_id);
         }
     }

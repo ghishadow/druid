@@ -58,6 +58,7 @@ pub struct Window<T> {
     size: Size,
     pub(crate) scale: f64,
     invalid: Region,
+    needs_layout: bool,
     pub(crate) menu: Option<MenuManager<T>>,
     pub(crate) context_menu: Option<(MenuManager<T>, Point)>,
     // This will be `Some` whenever the most recently displayed frame was an animation frame.
@@ -100,6 +101,7 @@ impl<T> Window<T> {
             size,
             scale,
             invalid: Region::EMPTY,
+            needs_layout: true,
             title: pending.title,
             transparent: pending.transparent,
             menu: pending.menu,
@@ -234,6 +236,7 @@ impl<T: Data> Window<T> {
             self.handle.request_anim_frame();
         }
         self.invalid.union_with(&widget_state.invalid);
+        self.needs_layout |= widget_state.needs_layout;
         for ime_field in widget_state.text_registrations.drain(..) {
             let token = self.handle.add_text_field();
             tracing::debug!("{:?} added", token);
@@ -429,7 +432,7 @@ impl<T: Data> Window<T> {
     }
 
     pub(crate) fn invalidate_and_finalize(&mut self) {
-        if self.root.state().needs_layout {
+        if self.needs_layout {
             self.handle.invalidate();
         } else {
             if !self.invalid.is_empty() {
@@ -468,7 +471,8 @@ impl<T: Data> Window<T> {
     }
 
     pub(crate) fn do_paint(&mut self, queue: &mut CommandQueue, data: &T, env: &Env) {
-        if self.root.state().needs_layout {
+        if self.needs_layout {
+            self.needs_layout = false;
             self.layout(queue, data, env);
         }
 

@@ -334,7 +334,9 @@ impl WindowHandle {
     /// [`invalidate_rect`]: WindowHandle::invalidate_rect
     /// [`paint`]: WinHandler::paint
     /// [`prepare_paint`]: WinHandler::prepare_paint
-    pub fn request_anim_frame(&self) {}
+    pub fn request_anim_frame(&self) {
+        self.0.request_redraw();
+    }
 
     /// Request invalidation of the entire window contents.
     pub fn invalidate(&self) {

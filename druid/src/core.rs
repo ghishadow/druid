@@ -734,6 +734,7 @@ impl<T: Data, W: Widget<T>> WidgetPod<T, W> {
                 self.state.needs_layout = true;
                 true
             }
+            Event::ApplicationQuit => true,
             Event::WindowMoved(_) => true,
             Event::MouseDown(mouse_event) => {
                 WidgetPod::set_hot_state(
@@ -1298,6 +1299,7 @@ impl WidgetState {
         child_state.invalid.clear();
 
         self.needs_layout |= child_state.needs_layout;
+        child_state.needs_layout = false;
         self.needs_window_origin |= child_state.needs_window_origin;
         self.request_anim |= child_state.request_anim;
         self.children_disabled_changed |= child_state.children_disabled_changed;

@@ -50,6 +50,7 @@ use crate::{Command, Notification, WidgetId};
 /// [`WidgetPod`]: struct.WidgetPod.html
 #[derive(Debug, Clone)]
 pub enum Event {
+    ApplicationQuit,
     /// Sent to all widgets in a given window when that window is first instantiated.
     ///
     /// This should always be the first `Event` received, although widgets will
@@ -430,7 +431,8 @@ impl Event {
     /// [`LifeCycle::should_propagate_to_hidden`]: LifeCycle::should_propagate_to_hidden
     pub fn should_propagate_to_hidden(&self) -> bool {
         match self {
-            Event::WindowConnected
+            Event::ApplicationQuit
+            | Event::WindowConnected
             | Event::WindowCloseRequested
             | Event::WindowDisconnected
             | Event::WindowSize(_, _)

@@ -321,6 +321,9 @@ impl<T: Data> AppLauncher<T> {
                     *control_flow = ControlFlow::WaitUntil(*instant);
                 }
             },
+            winit::event::Event::LoopDestroyed => {
+                state.do_window_event(Event::ApplicationQuit, WindowId::next());
+            }
             winit::event::Event::WindowEvent { window_id, event } => match event {
                 winit::event::WindowEvent::ScaleFactorChanged {
                     scale_factor,
@@ -718,6 +721,17 @@ impl<T: Data> WindowDesc<T> {
             pending: PendingWindow::new(root),
             config: WindowConfig::default(),
             id: WindowId::next(),
+        }
+    }
+
+    pub fn new_with_id<W>(id: WindowId, root: W) -> WindowDesc<T>
+    where
+        W: Widget<T> + 'static,
+    {
+        WindowDesc {
+            pending: PendingWindow::new(root),
+            config: WindowConfig::default(),
+            id,
         }
     }
 
